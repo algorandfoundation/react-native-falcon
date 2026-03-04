@@ -15,12 +15,27 @@ npm install react-native-falcon react-native-nitro-modules
 ## Usage
 
 
-```js
-import { multiply } from 'react-native-falcon';
+```ts
+import { FalconModule } from 'react-native-falcon';
 
-// ...
+// 1. Generate a key pair
+const { publicKey, privateKey } = FalconModule.generateKey();
 
-const result = multiply(3, 7);
+// 2. Sign a message
+const message = new TextEncoder().encode('Hello, Falcon!').buffer as ArrayBuffer;
+const signature = FalconModule.signCompressed(privateKey, message);
+
+// 3. Verify a signature
+try {
+  FalconModule.verify(publicKey, signature, message);
+  console.log('Signature is valid!');
+} catch (error) {
+  console.error('Signature verification failed:', error.message);
+}
+
+// Access constants
+console.log(`Public Key Size: ${FalconModule.publicKeySize}`);
+console.log(`Private Key Size: ${FalconModule.privateKeySize}`);
 ```
 
 
