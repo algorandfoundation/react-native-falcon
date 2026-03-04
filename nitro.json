@@ -1,0 +1,17 @@
+{
+  "cxxNamespace": ["falcon"],
+  "ios": {
+    "iosModuleName": "Falcon"
+  },
+  "android": {
+    "androidNamespace": ["falcon"],
+    "androidCxxLibName": "falcon"
+  },
+  "autolinking": {
+    "Falcon": {
+      "swift": "Falcon",
+      "kotlin": "Falcon"
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
