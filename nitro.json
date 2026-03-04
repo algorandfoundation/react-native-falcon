@@ -9,8 +9,7 @@
   },
   "autolinking": {
     "Falcon": {
-      "swift": "Falcon",
-      "kotlin": "Falcon"
+      "cpp": "HybridFalcon"
     }
   },
   "ignorePaths": ["node_modules"]

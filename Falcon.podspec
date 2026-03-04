@@ -17,7 +17,14 @@ Pod::Spec.new do |s|
     "ios/**/*.{swift}",
     "ios/**/*.{m,mm}",
     "cpp/**/*.{hpp,cpp}",
+    "falcon/*.{c,h}",
   ]
+  s.pod_target_xcconfig = {
+    "HEADER_SEARCH_PATHS" => [
+      "\"$(PODS_TARGET_SRCROOT)/falcon\"",
+      "\"$(PODS_TARGET_SRCROOT)/cpp\"",
+    ],
+  }
 
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
