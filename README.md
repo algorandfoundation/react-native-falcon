@@ -1,14 +1,18 @@
 # react-native-falcon
 
-Falcon is based on NTRU lattices, used with a hash-and-sign structure
+> [!IMPORTANT]
+> This is a primitive library used for interacting with the underlying native falcon code.
+> It is not a Falcon LSIG Account; this library only provides the primitives for signing and verifying messages.
+
+Falcon is based on NTRU lattices, used with a hash-and-sign structure.
+
 
 ## Installation
 
+> `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
 
 ```sh
-npm install react-native-falcon react-native-nitro-modules
-
-> `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
+npm install react-native-falcon react-native-nitro-modules --save
 ```
 
 
