@@ -137,10 +137,10 @@ jobs:
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
 
-      - name: Prebuild expo app for iOS
+      - name: Prebuild expo app for Android
         if: env.turbo_cache_hit != 1
         run: |
-          pnpm example expo prebuild --platform android
+          pnpm example exec expo prebuild --platform android
 
       - name: Cache Gradle
         if: env.turbo_cache_hit != 1
@@ -212,7 +212,7 @@ jobs:
       - name: Prebuild expo app for iOS
         if: env.turbo_cache_hit != 1
         run: |
-          pnpm example expo prebuild --platform ios
+          pnpm example exec expo prebuild --platform ios
 
       - name: Build example for iOS
         run: |

@@ -49,19 +49,19 @@ You can use various commands from the root directory to work with the project.
 To start the packager:
 
 ```sh
-pnpm example start
+pnpm example run start
 ```
 
 To run the example app on Android:
 
 ```sh
-pnpm example android
+pnpm example run android
 ```
 
 To run the example app on iOS:
 
 ```sh
-pnpm example ios
+pnpm example run ios
 ```
 
 To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
@@ -130,9 +130,9 @@ The `package.json` file contains various scripts for common tasks:
 - `pnpm typecheck`: type-check files with TypeScript.
 - `pnpm lint`: lint files with [ESLint](https://eslint.org/).
 - `pnpm test`: run unit tests with [Jest](https://jestjs.io/).
-- `pnpm example start`: start the Metro server for the example app.
-- `pnpm example android`: run the example app on Android.
-- `pnpm example ios`: run the example app on iOS.
+- `pnpm example run start`: start the Metro server for the example app.
+- `pnpm example run android`: run the example app on Android.
+- `pnpm example run ios`: run the example app on iOS.
 
 ### 📤 Sending a pull request
 

@@ -38,7 +38,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "pnpm --filter react-native-falcon-example run start",
+    "example": "pnpm --filter react-native-falcon-example",
     "clean": "del-cli lib",
     "prepare": "bob build",
     "nitrogen": "nitrogen",
