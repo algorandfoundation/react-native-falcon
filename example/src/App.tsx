@@ -1,27 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import { FalconModule } from 'react-native-falcon';
+import { useEffect, useState } from "react";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { FalconModule } from "react-native-falcon";
 
 export default function App() {
-  const [status, setStatus] = useState<string>('Initializing...');
+  const [status, setStatus] = useState<string>("Initializing...");
 
   useEffect(() => {
     try {
-      const msg = new TextEncoder().encode('Hello, Falcon!');
+      const msg = new TextEncoder().encode("Hello, Falcon!");
 
       // 1. Generate Key
-      setStatus('Generating key...');
+      setStatus("Generating key...");
       const { publicKey, privateKey } = FalconModule.generateKey();
 
       // 2. Sign
-      setStatus('Signing message...');
-      const sig = FalconModule.signCompressed(
-        privateKey,
-        msg.buffer as ArrayBuffer
-      );
+      setStatus("Signing message...");
+      const sig = FalconModule.signCompressed(privateKey, msg.buffer as ArrayBuffer);
 
       // 3. Verify
-      setStatus('Verifying signature...');
+      setStatus("Verifying signature...");
       FalconModule.verify(publicKey, sig, msg.buffer as ArrayBuffer);
 
       // 4. Constants
@@ -30,7 +27,7 @@ export default function App() {
         `Private Key Size: ${FalconModule.privateKeySize}`,
         `N: ${FalconModule.n}`,
         `Signature Size: ${sig.byteLength}`,
-      ].join('\n');
+      ].join("\n");
 
       setStatus(`Success!\n\n${info}`);
     } catch (e: any) {
@@ -51,20 +48,20 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   scroll: {
     padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   status: {
     fontSize: 16,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
 });

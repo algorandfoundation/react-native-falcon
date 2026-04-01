@@ -1,5 +1,5 @@
 packages:
-  - '.'
-  - 'example'
+  - "."
+  - "example"
 allowBuilds:
   lefthook: true
