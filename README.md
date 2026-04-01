@@ -1,4 +1,4 @@
-# react-native-falcon
+# 🦅 react-native-falcon
 
 > [!IMPORTANT]
 > This is a primitive library used for interacting with the underlying native falcon code.
@@ -6,35 +6,32 @@
 
 Falcon is based on NTRU lattices, used with a hash-and-sign structure.
 
-
-## Installation
+## 📦 Installation
 
 > `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
 
 ```sh
-npm install react-native-falcon react-native-nitro-modules --save
+pnpm add react-native-falcon react-native-nitro-modules
 ```
 
-
-## Usage
-
+## 🚀 Usage
 
 ```ts
-import { FalconModule } from 'react-native-falcon';
+import { FalconModule } from "react-native-falcon";
 
 // 1. Generate a key pair
 const { publicKey, privateKey } = FalconModule.generateKey();
 
 // 2. Sign a message
-const message = new TextEncoder().encode('Hello, Falcon!').buffer as ArrayBuffer;
+const message = new TextEncoder().encode("Hello, Falcon!").buffer as ArrayBuffer;
 const signature = FalconModule.signCompressed(privateKey, message);
 
 // 3. Verify a signature
 try {
   FalconModule.verify(publicKey, signature, message);
-  console.log('Signature is valid!');
+  console.log("Signature is valid!");
 } catch (error) {
-  console.error('Signature verification failed:', error.message);
+  console.error("Signature verification failed:", error.message);
 }
 
 // Access constants
@@ -42,16 +39,15 @@ console.log(`Public Key Size: ${FalconModule.publicKeySize}`);
 console.log(`Private Key Size: ${FalconModule.privateKeySize}`);
 ```
 
-
-## Contributing
+## 🤝 Contributing
 
 - [Development workflow](CONTRIBUTING.md#development-workflow)
 - [Sending a pull request](CONTRIBUTING.md#sending-a-pull-request)
 - [Code of conduct](CODE_OF_CONDUCT.md)
 
-## License
+## 📄 License
 
-MIT
+Apache-2.0
 
 ---
 

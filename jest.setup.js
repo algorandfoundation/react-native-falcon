@@ -1,9 +1,9 @@
 /* global jest, TextDecoder */
-jest.mock('react-native-nitro-modules', () => {
+jest.mock("react-native-nitro-modules", () => {
   return {
     NitroModules: {
       createHybridObject: jest.fn((name) => {
-        if (name === 'Falcon') {
+        if (name === "Falcon") {
           return {
             publicKeySize: 897,
             privateKeySize: 1281,
@@ -19,15 +19,14 @@ jest.mock('react-native-nitro-modules', () => {
             convertToCT: jest.fn(() => new ArrayBuffer(1024)),
             verify: jest.fn((publicKey, signature, msg) => {
               const msgStr = new TextDecoder().decode(msg);
-              if (msgStr === 'wrong message')
-                throw new Error('Verification failed');
+              if (msgStr === "wrong message") throw new Error("Verification failed");
             }),
             verifyCTSignature: jest.fn(),
             getSaltVersion: jest.fn(() => 1),
-            getPublicKeyCoefficients: jest.fn(() => new Array(1024).fill(0)),
-            getS2Coefficients: jest.fn(() => new Array(1024).fill(0)),
-            getS1Coefficients: jest.fn(() => new Array(1024).fill(0)),
-            hashToPointCoefficients: jest.fn(() => new Array(1024).fill(0)),
+            getPublicKeyCoefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
+            getS2Coefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
+            getS1Coefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
+            hashToPointCoefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
           };
         }
         return null;

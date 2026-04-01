@@ -9,7 +9,10 @@
   },
   "autolinking": {
     "Falcon": {
-      "cpp": "HybridFalcon"
+      "all": {
+        "language": "c++",
+        "implementationClassName": "HybridFalcon"
+      }
     }
   },
   "ignorePaths": ["node_modules"]

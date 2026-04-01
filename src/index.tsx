@@ -1,4 +1,4 @@
-import { NitroModules } from 'react-native-nitro-modules';
-import type { Falcon } from './Falcon.nitro';
+import { NitroModules } from "react-native-nitro-modules";
+import type { Falcon } from "./Falcon.nitro";
 
-export const FalconModule = NitroModules.createHybridObject<Falcon>('Falcon');
+export const FalconModule = NitroModules.createHybridObject<Falcon>("Falcon");
