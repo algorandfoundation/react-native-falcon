@@ -1,4 +1,5 @@
 import { FalconModule } from '../index';
+import { TextEncoder } from 'node:util';
 
 describe('FalconModule', () => {
   it('should have correct constants', () => {
