@@ -3,3 +3,5 @@ packages:
   - "example"
 allowBuilds:
   lefthook: true
+blockExoticSubdeps: false
+minimumReleaseAge: 10080
