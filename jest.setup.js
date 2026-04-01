@@ -24,10 +24,10 @@ jest.mock('react-native-nitro-modules', () => {
             }),
             verifyCTSignature: jest.fn(),
             getSaltVersion: jest.fn(() => 1),
-            getPublicKeyCoefficients: jest.fn(() => new Array(1024).fill(0)),
-            getS2Coefficients: jest.fn(() => new Array(1024).fill(0)),
-            getS1Coefficients: jest.fn(() => new Array(1024).fill(0)),
-            hashToPointCoefficients: jest.fn(() => new Array(1024).fill(0)),
+            getPublicKeyCoefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
+            getS2Coefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
+            getS1Coefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
+            hashToPointCoefficients: jest.fn(() => Array.from({ length: 1024 }).fill(0)),
           };
         }
         return null;

@@ -1,4 +1,4 @@
-# react-native-falcon
+# 🦅 react-native-falcon
 
 > [!IMPORTANT]
 > This is a primitive library used for interacting with the underlying native falcon code.
@@ -7,16 +7,16 @@
 Falcon is based on NTRU lattices, used with a hash-and-sign structure.
 
 
-## Installation
+## 📦 Installation
 
 > `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
 
 ```sh
-npm install react-native-falcon react-native-nitro-modules --save
+pnpm add react-native-falcon react-native-nitro-modules
 ```
 
 
-## Usage
+## 🚀 Usage
 
 
 ```ts
@@ -43,13 +43,13 @@ console.log(`Private Key Size: ${FalconModule.privateKeySize}`);
 ```
 
 
-## Contributing
+## 🤝 Contributing
 
 - [Development workflow](CONTRIBUTING.md#development-workflow)
 - [Sending a pull request](CONTRIBUTING.md#sending-a-pull-request)
 - [Code of conduct](CODE_OF_CONDUCT.md)
 
-## License
+## 📄 License
 
 MIT
 
