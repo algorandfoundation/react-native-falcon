@@ -140,7 +140,8 @@
       "release",
       {
         "name": "main",
-        "prerelease": "canary"
+        "prerelease": "canary",
+        "channel": "next"
       }
     ]
   },
