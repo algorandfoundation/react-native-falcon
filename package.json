@@ -60,7 +60,7 @@
     "url": "git+https://github.com/algorandfoundation/react-native-falcon.git"
   },
   "author": "Algorand Foundation <apps@algorand.co> (https://algorand.co)",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/algorandfoundation/react-native-falcon/issues"
   },

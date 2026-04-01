@@ -51,7 +51,7 @@ console.log(`Private Key Size: ${FalconModule.privateKeySize}`);
 
 ## 📄 License
 
-MIT
+Apache-2.0
 
 ---
 
