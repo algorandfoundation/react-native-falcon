@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { FalconModule } from "react-native-falcon";
+import { Falcon1024Module } from "react-native-falcon";
 
 export default function App() {
   const [status, setStatus] = useState<string>("Initializing...");
@@ -11,21 +11,21 @@ export default function App() {
 
       // 1. Generate Key
       setStatus("Generating key...");
-      const { publicKey, privateKey } = FalconModule.generateKey();
+      const { publicKey, privateKey } = Falcon1024Module.generateKey();
 
       // 2. Sign
       setStatus("Signing message...");
-      const sig = FalconModule.signCompressed(privateKey, msg.buffer as ArrayBuffer);
+      const sig = Falcon1024Module.signCompressed(privateKey, msg.buffer as ArrayBuffer);
 
       // 3. Verify
       setStatus("Verifying signature...");
-      FalconModule.verify(publicKey, sig, msg.buffer as ArrayBuffer);
+      Falcon1024Module.verify(publicKey, sig, msg.buffer as ArrayBuffer);
 
       // 4. Constants
       const info = [
-        `Public Key Size: ${FalconModule.publicKeySize}`,
-        `Private Key Size: ${FalconModule.privateKeySize}`,
-        `N: ${FalconModule.n}`,
+        `Public Key Size: ${Falcon1024Module.publicKeySize}`,
+        `Private Key Size: ${Falcon1024Module.privateKeySize}`,
+        `N: ${Falcon1024Module.n}`,
         `Signature Size: ${sig.byteLength}`,
       ].join("\n");
 

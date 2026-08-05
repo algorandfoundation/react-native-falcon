@@ -17,26 +17,26 @@ pnpm add react-native-falcon react-native-nitro-modules
 ## 🚀 Usage
 
 ```ts
-import { FalconModule } from "react-native-falcon";
+import { Falcon1024Module } from "react-native-falcon";
 
 // 1. Generate a key pair
-const { publicKey, privateKey } = FalconModule.generateKey();
+const { publicKey, privateKey } = Falcon1024Module.generateKey();
 
 // 2. Sign a message
 const message = new TextEncoder().encode("Hello, Falcon!").buffer as ArrayBuffer;
-const signature = FalconModule.signCompressed(privateKey, message);
+const signature = Falcon1024Module.signCompressed(privateKey, message);
 
 // 3. Verify a signature
 try {
-  FalconModule.verify(publicKey, signature, message);
+  Falcon1024Module.verify(publicKey, signature, message);
   console.log("Signature is valid!");
 } catch (error) {
   console.error("Signature verification failed:", error.message);
 }
 
 // Access constants
-console.log(`Public Key Size: ${FalconModule.publicKeySize}`);
-console.log(`Private Key Size: ${FalconModule.privateKeySize}`);
+console.log(`Public Key Size: ${Falcon1024Module.publicKeySize}`);
+console.log(`Private Key Size: ${Falcon1024Module.privateKeySize}`);
 ```
 
 ## 🤝 Contributing
