@@ -1,59 +1,59 @@
-import { FalconModule } from "../index";
+import { Falcon1024Module } from "../index";
 import { TextEncoder } from "node:util";
 
-describe("FalconModule", () => {
+describe("Falcon1024Module", () => {
   it("should have correct constants", () => {
-    expect(FalconModule.publicKeySize).toBeGreaterThan(0);
-    expect(FalconModule.privateKeySize).toBeGreaterThan(0);
-    expect(FalconModule.n).toBe(1024);
+    expect(Falcon1024Module.publicKeySize).toBeGreaterThan(0);
+    expect(Falcon1024Module.privateKeySize).toBeGreaterThan(0);
+    expect(Falcon1024Module.n).toBe(1024);
   });
 
   it("should generate a keypair", () => {
-    const { publicKey, privateKey } = FalconModule.generateKey();
+    const { publicKey, privateKey } = Falcon1024Module.generateKey();
     expect(publicKey).toBeDefined();
     expect(privateKey).toBeDefined();
-    expect(publicKey.byteLength).toBe(FalconModule.publicKeySize);
-    expect(privateKey.byteLength).toBe(FalconModule.privateKeySize);
+    expect(publicKey.byteLength).toBe(Falcon1024Module.publicKeySize);
+    expect(privateKey.byteLength).toBe(Falcon1024Module.privateKeySize);
   });
 
   it("should sign and verify a message", () => {
-    const { publicKey, privateKey } = FalconModule.generateKey();
+    const { publicKey, privateKey } = Falcon1024Module.generateKey();
     const msg = new TextEncoder().encode("test message").buffer as ArrayBuffer;
 
-    const sig = FalconModule.signCompressed(privateKey, msg);
+    const sig = Falcon1024Module.signCompressed(privateKey, msg);
     expect(sig).toBeDefined();
     expect(sig.byteLength).toBeGreaterThan(0);
 
     // Should not throw
-    expect(() => FalconModule.verify(publicKey, sig, msg)).not.toThrow();
+    expect(() => Falcon1024Module.verify(publicKey, sig, msg)).not.toThrow();
   });
 
   it("should fail verification with wrong message", () => {
-    const { publicKey, privateKey } = FalconModule.generateKey();
+    const { publicKey, privateKey } = Falcon1024Module.generateKey();
     const msg = new TextEncoder().encode("test message").buffer as ArrayBuffer;
     const wrongMsg = new TextEncoder().encode("wrong message").buffer as ArrayBuffer;
 
-    const sig = FalconModule.signCompressed(privateKey, msg);
+    const sig = Falcon1024Module.signCompressed(privateKey, msg);
 
-    expect(() => FalconModule.verify(publicKey, sig, wrongMsg)).toThrow();
+    expect(() => Falcon1024Module.verify(publicKey, sig, wrongMsg)).toThrow();
   });
 
   it("should convert to CT and verify", () => {
-    const { publicKey, privateKey } = FalconModule.generateKey();
+    const { publicKey, privateKey } = Falcon1024Module.generateKey();
     const msg = new TextEncoder().encode("test message").buffer as ArrayBuffer;
 
-    const sig = FalconModule.signCompressed(privateKey, msg);
-    const sigCT = FalconModule.convertToCT(sig);
+    const sig = Falcon1024Module.signCompressed(privateKey, msg);
+    const sigCT = Falcon1024Module.convertToCT(sig);
 
-    expect(sigCT.byteLength).toBe(FalconModule.ctSignatureSize);
-    expect(() => FalconModule.verifyCTSignature(publicKey, sigCT, msg)).not.toThrow();
+    expect(sigCT.byteLength).toBe(Falcon1024Module.ctSignatureSize);
+    expect(() => Falcon1024Module.verifyCTSignature(publicKey, sigCT, msg)).not.toThrow();
   });
 
   it("should get salt version", () => {
     const msg = new TextEncoder().encode("test message").buffer as ArrayBuffer;
-    const { privateKey } = FalconModule.generateKey();
-    const sig = FalconModule.signCompressed(privateKey, msg);
-    const version = FalconModule.getSaltVersion(sig);
-    expect(version).toBe(FalconModule.currentSaltVersion);
+    const { privateKey } = Falcon1024Module.generateKey();
+    const sig = Falcon1024Module.signCompressed(privateKey, msg);
+    const version = Falcon1024Module.getSaltVersion(sig);
+    expect(version).toBe(Falcon1024Module.currentSaltVersion);
   });
 });
