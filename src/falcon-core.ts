@@ -32,6 +32,16 @@ export const FALCON_DET1024_PRIVKEY_SIZE = falconPrivKeySize(FALCON_DET1024_LOGN
 export const FALCON_DET1024_SIG_COMPRESSED_MAXSIZE =
   falconSigCompressedMaxSize(FALCON_DET1024_LOGN) - 40 + 1;
 
+/** Maximum size of a randomized (salted) compressed Falcon-1024 signature. */
+export const FALCON1024_SIG_COMPRESSED_MAXSIZE = falconSigCompressedMaxSize(FALCON_DET1024_LOGN);
+
+/** Header byte of a deterministic compressed Falcon-1024 signature. */
+export const FALCON_DET1024_SIG_COMPRESSED_HEADER = 0x3a | 0x80;
+/** Header byte of a randomized (salted) compressed Falcon-1024 signature. */
+export const FALCON1024_SIG_COMPRESSED_HEADER = 0x3a;
+
+const FALCON_ERR_FORMAT = -3;
+
 class FalconError extends Error {
   constructor(context: number | string) {
     if (typeof context === "string") {
@@ -83,7 +93,7 @@ export interface FalconApi {
     publicKey: Uint8Array;
     privateKey: Uint8Array;
   };
-  signCompressed(privateKey: Uint8Array, message: Uint8Array): Uint8Array;
+  signCompressed(privateKey: Uint8Array, message: Uint8Array, randomized?: boolean): Uint8Array;
   verifyCompressed(publicKey: Uint8Array, signature: Uint8Array, message: Uint8Array): boolean;
 }
 
@@ -146,9 +156,20 @@ export function makeApi(native: Falcon): FalconApi {
    * Signs a message with the given private key using compressed format.
    * @param privateKey - The private key (FALCON_DET1024_PRIVKEY_SIZE bytes).
    * @param message - The message to sign.
+   * @param randomized - If true, uses randomized (salted) Falcon with a fresh random 40-byte
+   * nonce, so signing the same message twice yields different signatures. Defaults to false
+   * (deterministic). Note that the Algorand AVM `falcon_verify` opcode only accepts
+   * deterministic signatures.
+   * Experimental: randomized mode implements the NIST Round 3 Falcon
+   * submission, not FN-DSA (FIPS 206). Its output is expected to change once
+   * FIPS 206 is final.
    * @returns The compressed signature as a Uint8Array.
    */
-  function signCompressed(privateKey: Uint8Array, message: Uint8Array): Uint8Array {
+  function signCompressed(
+    privateKey: Uint8Array,
+    message: Uint8Array,
+    randomized: boolean = false,
+  ): Uint8Array {
     if (privateKey.length !== FALCON_DET1024_PRIVKEY_SIZE) {
       throw new SigningError(
         `Invalid private key length: ${privateKey.length}. Expected ${FALCON_DET1024_PRIVKEY_SIZE}.`,
@@ -156,12 +177,17 @@ export function makeApi(native: Falcon): FalconApi {
     }
 
     return withNativeErrors(SigningError, () =>
-      toUint8Array(native.signCompressed(toArrayBuffer(privateKey), toArrayBuffer(message))),
+      toUint8Array(
+        randomized
+          ? native.signCompressedRandomized(toArrayBuffer(privateKey), toArrayBuffer(message))
+          : native.signCompressed(toArrayBuffer(privateKey), toArrayBuffer(message)),
+      ),
     );
   }
 
   /**
-   * Verifies a compressed signature against a message and public key.
+   * Verifies a compressed signature against a message and public key. Both deterministic and
+   * randomized (salted) signatures are accepted; the mode is selected from the header byte.
    * @param publicKey - The public key (FALCON_DET1024_PUBKEY_SIZE bytes).
    * @param signature - The compressed signature.
    * @param message - The original message.
@@ -183,14 +209,29 @@ export function makeApi(native: Falcon): FalconApi {
       throw new VerificationError("Empty signature");
     }
 
-    if (signature.length > FALCON_DET1024_SIG_COMPRESSED_MAXSIZE) {
+    let maxSize: number;
+    let nativeVerify: (publicKey: ArrayBuffer, signature: ArrayBuffer, msg: ArrayBuffer) => void;
+    switch (signature[0]) {
+      case FALCON_DET1024_SIG_COMPRESSED_HEADER:
+        maxSize = FALCON_DET1024_SIG_COMPRESSED_MAXSIZE;
+        nativeVerify = (pk, sig, msg) => native.verify(pk, sig, msg);
+        break;
+      case FALCON1024_SIG_COMPRESSED_HEADER:
+        maxSize = FALCON1024_SIG_COMPRESSED_MAXSIZE;
+        nativeVerify = (pk, sig, msg) => native.verifyRandomized(pk, sig, msg);
+        break;
+      default:
+        throw new VerificationError(FALCON_ERR_FORMAT);
+    }
+
+    if (signature.length > maxSize) {
       throw new VerificationError(
-        `Invalid signature length: ${signature.length}. Maximum is ${FALCON_DET1024_SIG_COMPRESSED_MAXSIZE}.`,
+        `Invalid signature length: ${signature.length}. Maximum is ${maxSize}.`,
       );
     }
 
     return withNativeErrors(VerificationError, () => {
-      native.verify(toArrayBuffer(publicKey), toArrayBuffer(signature), toArrayBuffer(message));
+      nativeVerify(toArrayBuffer(publicKey), toArrayBuffer(signature), toArrayBuffer(message));
       return true;
     });
   }
