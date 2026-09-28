@@ -1,6 +1,6 @@
 {
   "name": "@algorandfoundation/react-native-falcon",
-  "version": "0.0.0",
+  "version": "1.0.0-canary.1",
   "description": "Falcon is based on NTRU lattices, used with a hash-and-sign structure",
   "keywords": [
     "android",
