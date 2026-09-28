@@ -1,36 +1,36 @@
-import { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import { FalconModule } from 'react-native-falcon';
+import { useEffect, useState } from "react";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
+import {
+  falcon1024,
+  FALCON_DET1024_PRIVKEY_SIZE,
+  FALCON_DET1024_PUBKEY_SIZE,
+} from "@algorandfoundation/react-native-falcon";
 
 export default function App() {
-  const [status, setStatus] = useState<string>('Initializing...');
+  const [status, setStatus] = useState<string>("Initializing...");
 
   useEffect(() => {
     try {
-      const msg = new TextEncoder().encode('Hello, Falcon!');
+      const msg = new TextEncoder().encode("Hello, Falcon!");
 
       // 1. Generate Key
-      setStatus('Generating key...');
-      const { publicKey, privateKey } = FalconModule.generateKey();
+      setStatus("Generating key...");
+      const { publicKey, privateKey } = falcon1024.generateKey();
 
       // 2. Sign
-      setStatus('Signing message...');
-      const sig = FalconModule.signCompressed(
-        privateKey,
-        msg.buffer as ArrayBuffer
-      );
+      setStatus("Signing message...");
+      const sig = falcon1024.signCompressed(privateKey, msg);
 
       // 3. Verify
-      setStatus('Verifying signature...');
-      FalconModule.verify(publicKey, sig, msg.buffer as ArrayBuffer);
+      setStatus("Verifying signature...");
+      falcon1024.verifyCompressed(publicKey, sig, msg);
 
       // 4. Constants
       const info = [
-        `Public Key Size: ${FalconModule.publicKeySize}`,
-        `Private Key Size: ${FalconModule.privateKeySize}`,
-        `N: ${FalconModule.n}`,
-        `Signature Size: ${sig.byteLength}`,
-      ].join('\n');
+        `Public Key Size: ${FALCON_DET1024_PUBKEY_SIZE}`,
+        `Private Key Size: ${FALCON_DET1024_PRIVKEY_SIZE}`,
+        `Signature Size: ${sig.length}`,
+      ].join("\n");
 
       setStatus(`Success!\n\n${info}`);
     } catch (e: any) {
@@ -51,20 +51,20 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   scroll: {
     padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   status: {
     fontSize: 16,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
 });

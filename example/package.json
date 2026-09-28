@@ -1,6 +1,8 @@
 {
   "name": "react-native-falcon-example",
   "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
@@ -14,7 +16,6 @@
     "react-native": "0.83.2",
     "react-native-nitro-modules": "^0.35.0"
   },
-  "private": true,
   "devDependencies": {
     "expo-dev-client": "~55.0.11",
     "react-native-builder-bob": "^0.40.18",

@@ -1,8 +1,5 @@
-name: CI
+name: Integration
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -21,15 +18,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: recursive
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Lint files
-        run: yarn lint
+        run: pnpm lint
+
+      - name: Check formatting
+        run: pnpm fmt:check
 
       - name: Typecheck files
-        run: yarn typecheck
+        run: pnpm typecheck
 
   test:
     runs-on: ubuntu-latest
@@ -37,12 +48,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: recursive
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run unit tests
-        run: yarn test --maxWorkers=2 --coverage
+        run: pnpm test --maxWorkers=2 --coverage
 
   build-library:
     runs-on: ubuntu-latest
@@ -50,12 +72,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: recursive
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build package
-        run: yarn prepare
+        run: pnpm prepare
 
   build-android:
     runs-on: ubuntu-latest
@@ -66,24 +99,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: recursive
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate nitrogen code
-        run: yarn nitrogen
+        run: pnpm nitrogen
 
       - name: Cache turborepo for Android
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-android-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-turborepo-android-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-turborepo-android-
 
       - name: Check turborepo cache for Android
         run: |
-          TURBO_CACHE_STATUS=$(node -p "($(yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:android').cache.status")
+          TURBO_CACHE_STATUS=$(node -p "($(pnpm turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:android').cache.status")
 
           if [[ $TURBO_CACHE_STATUS == "HIT" ]]; then
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
@@ -93,18 +137,18 @@ jobs:
         if: env.turbo_cache_hit != 1
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: "zulu"
+          java-version: "17"
 
       - name: Finalize Android SDK
         if: env.turbo_cache_hit != 1
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
 
-      - name: Prebuild expo app for iOS
+      - name: Prebuild expo app for Android
         if: env.turbo_cache_hit != 1
         run: |
-          yarn example expo prebuild --platform android
+          pnpm example exec expo prebuild --platform android
 
       - name: Cache Gradle
         if: env.turbo_cache_hit != 1
@@ -121,7 +165,7 @@ jobs:
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
         run: |
-          yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+          pnpm turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
     runs-on: macos-latest
@@ -135,24 +179,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: recursive
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Generate nitrogen code
-        run: yarn nitrogen
+        run: pnpm nitrogen
 
       - name: Cache turborepo for iOS
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-ios-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-turborepo-ios-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-turborepo-ios-
 
       - name: Check turborepo cache for iOS
         run: |
-          TURBO_CACHE_STATUS=$(node -p "($(yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:ios').cache.status")
+          TURBO_CACHE_STATUS=$(node -p "($(pnpm turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:ios').cache.status")
 
           if [[ $TURBO_CACHE_STATUS == "HIT" ]]; then
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
@@ -167,8 +222,8 @@ jobs:
       - name: Prebuild expo app for iOS
         if: env.turbo_cache_hit != 1
         run: |
-          yarn example expo prebuild --platform ios
+          pnpm example exec expo prebuild --platform ios
 
       - name: Build example for iOS
         run: |
-          yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+          pnpm turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
