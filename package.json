@@ -1,11 +1,15 @@
 {
-  "name": "react-native-falcon",
-  "version": "0.1.0",
+  "name": "@algorandfoundation/react-native-falcon",
+  "version": "0.0.0",
   "description": "Falcon is based on NTRU lattices, used with a hash-and-sign structure",
   "keywords": [
     "android",
+    "falcon",
+    "falcon-1024",
     "ios",
-    "react-native"
+    "post-quantum",
+    "react-native",
+    "signature"
   ],
   "homepage": "https://github.com/algorandfoundation/react-native-falcon#readme",
   "bugs": {
@@ -53,12 +57,14 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "access": "public",
     "provenance": true,
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "example": "pnpm --filter react-native-falcon-example",
     "clean": "del-cli lib",
+    "build": "bob build",
     "prepare": "bob build",
     "nitrogen": "nitrogen",
     "typecheck": "tsc",
@@ -67,7 +73,7 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "test": "jest",
-    "release": "semantic-release --dry-run"
+    "release": "semantic-release"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.5.0",
@@ -106,13 +112,6 @@
       "@commitlint/config-conventional"
     ]
   },
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
-  },
   "release": {
     "plugins": [
       "@semantic-release/commit-analyzer",
@@ -126,7 +125,7 @@
             "CHANGELOG.md",
             "package.json"
           ],
-          "message": "chore(release): Wallet Provider \n\n${nextRelease.notes}"
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
       [
@@ -165,8 +164,7 @@
     "tools": [
       "eslint",
       "jest",
-      "lefthook",
-      "release-it"
+      "lefthook"
     ],
     "version": "0.57.2"
   },
@@ -194,24 +192,5 @@
         }
       ]
     ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": {
-          "name": "angular"
-        }
-      }
-    }
   }
 }
