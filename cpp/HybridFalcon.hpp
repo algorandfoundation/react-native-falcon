@@ -103,6 +103,13 @@ namespace margelo::nitro::falcon {
       }
 
       double getSaltVersion(const std::shared_ptr<ArrayBuffer>& signature) override {
+        // Randomized (salted) signatures carry a nonce instead of a salt version.
+        if (signature->size() > 0) {
+          uint8_t header = ((uint8_t*)signature->data())[0];
+          if ((header & 0x80) == 0) {
+            throw std::runtime_error("Falcon get salt version failed with error code " + std::to_string(FALCON_ERR_FORMAT));
+          }
+        }
         int version = falcon_det1024_get_salt_version(signature->data());
         if (version < 0) {
             // If signature is too short, falcon.go returns 0
@@ -168,6 +175,51 @@ namespace margelo::nitro::falcon {
         std::vector<double> result(n);
         for (size_t i = 0; i < n; ++i) result[i] = c[i];
         return result;
+      }
+
+      std::shared_ptr<ArrayBuffer> signCompressedRandomized(const std::shared_ptr<ArrayBuffer>& privateKey, const std::shared_ptr<ArrayBuffer>& msg) override {
+        if (privateKey->size() < FALCON_DET1024_PRIVKEY_SIZE) {
+          throw std::runtime_error("Invalid private key size");
+        }
+
+        shake256_context rng;
+        int rngResult = shake256_init_prng_from_system(&rng);
+        if (rngResult != 0) {
+          throw std::runtime_error("Falcon sign failed with error code " + std::to_string(rngResult));
+        }
+
+        // The temporary buffer is ~80 KB for n=1024; keep it off the (small) mobile thread stack.
+        std::vector<uint8_t> tmp(FALCON_TMPSIZE_SIGNDYN(FALCON_DET1024_LOGN));
+        size_t sigLen = FALCON_SIG_COMPRESSED_MAXSIZE(FALCON_DET1024_LOGN);
+        std::vector<uint8_t> sig(sigLen);
+
+        int r = falcon_sign_dyn(&rng, sig.data(), &sigLen, FALCON_SIG_COMPRESSED,
+                                privateKey->data(), FALCON_DET1024_PRIVKEY_SIZE, msg->data(), msg->size(),
+                                tmp.data(), tmp.size());
+        if (r != 0) {
+          throw std::runtime_error("Falcon sign failed with error code " + std::to_string(r));
+        }
+
+        auto resultBuffer = ArrayBuffer::allocate(sigLen);
+        memcpy(resultBuffer->data(), sig.data(), sigLen);
+        return resultBuffer;
+      }
+
+      void verifyRandomized(const std::shared_ptr<ArrayBuffer>& publicKey, const std::shared_ptr<ArrayBuffer>& signature, const std::shared_ptr<ArrayBuffer>& msg) override {
+        if (publicKey->size() < FALCON_DET1024_PUBKEY_SIZE) {
+          throw std::runtime_error("Invalid public key size");
+        }
+        if (signature->size() == 0) {
+          throw std::runtime_error("Empty signature");
+        }
+
+        std::vector<uint8_t> tmp(FALCON_TMPSIZE_VERIFY(FALCON_DET1024_LOGN));
+        int r = falcon_verify(signature->data(), signature->size(), FALCON_SIG_COMPRESSED,
+                              publicKey->data(), FALCON_DET1024_PUBKEY_SIZE, msg->data(), msg->size(),
+                              tmp.data(), tmp.size());
+        if (r != 0) {
+          throw std::runtime_error("Falcon verify failed with error code " + std::to_string(r));
+        }
       }
   };
 

@@ -25,4 +25,8 @@ export interface Falcon extends HybridObject<{ ios: "c++"; android: "c++" }> {
   getS2Coefficients(signature: ArrayBuffer): number[];
   getS1Coefficients(h: number[], c: number[], s2: number[]): number[];
   hashToPointCoefficients(msg: ArrayBuffer, saltVersion: number): number[];
+
+  // Randomized (salted) Falcon, as in the Round 3 specification
+  signCompressedRandomized(privateKey: ArrayBuffer, msg: ArrayBuffer): ArrayBuffer;
+  verifyRandomized(publicKey: ArrayBuffer, signature: ArrayBuffer, msg: ArrayBuffer): void;
 }
