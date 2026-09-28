@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-falcon": ["./src/index"]
+      "@algorandfoundation/react-native-falcon": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

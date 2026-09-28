@@ -27,10 +27,12 @@ namespace margelo::nitro::falcon {
         if (seed.has_value() && (*seed)->size() > 0) {
           shake256_init_prng_from_seed(&rng, (*seed)->data(), (*seed)->size());
         } else {
-          // In falcon.go, it uses shake256_init_prng_from_seed with NULL if seed is empty.
-          // We can do the same or use shake256_init_prng_from_system.
-          // falcon.go: C.shake256_init_prng_from_seed(&rng, C.NULL, 0)
-          shake256_init_prng_from_seed(&rng, nullptr, 0);
+          // Without a seed, the PRNG must be seeded from the OS RNG. Seeding from an
+          // empty buffer would make every generated key pair identical.
+          int rngResult = shake256_init_prng_from_system(&rng);
+          if (rngResult != 0) {
+            throw std::runtime_error("Falcon keygen failed with error code " + std::to_string(rngResult));
+          }
         }
 
         auto publicKeyBuffer = ArrayBuffer::allocate(FALCON_DET1024_PUBKEY_SIZE);

@@ -111,13 +111,12 @@ Our pre-commit hooks verify that your commit message matches this format when co
 
 ### 📦 Publishing to npm
 
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
+We use [semantic-release](https://github.com/semantic-release/semantic-release) to publish new versions. Releases are fully automated by the `Release` GitHub workflow and are derived from the conventional commit messages:
 
-To publish new versions, run the following:
+- Every push to `main` publishes a `canary` prerelease (e.g. `1.0.0-canary.1`) under the `canary` dist-tag.
+- Every push to `release` publishes a stable version under the `latest` dist-tag.
 
-```sh
-pnpm release
-```
+The workflow bumps the version, updates `CHANGELOG.md`, tags the commit, creates a GitHub release and publishes to npm with provenance. There is no need to run a release locally.
 
 ### 📜 Scripts
 
